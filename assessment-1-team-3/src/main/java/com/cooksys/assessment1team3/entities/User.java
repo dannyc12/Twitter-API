@@ -1,7 +1,5 @@
 package com.cooksys.assessment1team3.entities;
 
-
-import com.cooksys.assessment1team3.entities.Profile;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
