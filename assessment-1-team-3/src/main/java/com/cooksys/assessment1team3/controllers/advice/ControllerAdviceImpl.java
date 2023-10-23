@@ -26,7 +26,7 @@ public class ControllerAdviceImpl {
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(NotAuthorizedException.class)
     public ErrorDto handleNotAuthorizedException(NotAuthorizedException notAuthorizedException) {
         return new ErrorDto(notAuthorizedException.getMessage());
     }
