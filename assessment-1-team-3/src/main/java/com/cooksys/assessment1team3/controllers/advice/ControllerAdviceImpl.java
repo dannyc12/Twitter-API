@@ -2,6 +2,7 @@ package com.cooksys.assessment1team3.controllers.advice;
 
 import com.cooksys.assessment1team3.dtos.ErrorDto;
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
+import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,4 +25,9 @@ public class ControllerAdviceImpl {
         return new ErrorDto(notFoundException.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(NotFoundException.class)
+    public ErrorDto handleNotAuthorizedException(NotAuthorizedException notAuthorizedException) {
+        return new ErrorDto(notAuthorizedException.getMessage());
+    }
 }
