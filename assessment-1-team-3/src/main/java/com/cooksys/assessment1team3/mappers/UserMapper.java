@@ -11,7 +11,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ProfileMapper.class, CredentialsMapper.class})
 public interface UserMapper {
 
-    @Mapping(target = "username", source = "credentials.username")
+    // @ Mapping throws error: java: Unknown property "username" in result type UserResponseDto. Did you mean "user"?
+//    @Mapping(target = "username", source = "credentials.username")
     UserResponseDto entityToDto(User user);
 
     List<UserResponseDto> entitiesToDtos(List<User> entities);
