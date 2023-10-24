@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final TweetMapper tweetMapper;
 
-
     @Override
     public UserResponseDto getUserByUsername(String username) {
         User user = userRepository.findByCredentialsUsername(username);
@@ -37,7 +36,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<TweetResponseDto> getTweetsByUsername(String username) {
         User user = userRepository.findByCredentialsUsername(username);
-        return tweetRepository.findAllTweetsByUserOrderedByPostedAsc(user);
+        if (user == null || user.isDeleted()) {
+            throw new NotFoundException("No user found with username: " + username);
+        }
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllTweetsByAuthorAndDeletedIsFalseOrderByPostedDesc(user));
     }
 
     public List<UserResponseDto> getAllUsers() {
