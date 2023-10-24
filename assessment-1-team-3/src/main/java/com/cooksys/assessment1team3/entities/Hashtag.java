@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @NoArgsConstructor
 @Data
@@ -17,13 +20,14 @@ public class Hashtag {
 
     private String label;
 
+    @CreationTimestamp
     private Timestamp firstUsed;
 
+    @UpdateTimestamp
     private Timestamp lastUsed;
 
-    @ManyToMany
-    @JoinTable(name="tweet_hashtags",
-            joinColumns = @JoinColumn(name="tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
+
+    @ManyToMany(mappedBy = "hashtags")
     private List<Tweet> tweets;
 
 }

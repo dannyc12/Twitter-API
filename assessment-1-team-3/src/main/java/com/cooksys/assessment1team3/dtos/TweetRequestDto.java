@@ -7,16 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class TweetRequestDto {
 
-    private User author;
-
     private String content;
 
-    private Tweet inReplyTo;
-
-    private Tweet repostOf;
+    private CredentialsDto credentials;
 
 }

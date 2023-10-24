@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserMapper {
 
     // @ Mapping throws error: java: Unknown property "username" in result type UserResponseDto. Did you mean "user"?
-//    @Mapping(target = "username", source = "credentials.username")
+    @Mapping(target = "username", source = "credentials.username")
     UserResponseDto entityToDto(User user);
 
     List<UserResponseDto> entitiesToDtos(List<User> entities);

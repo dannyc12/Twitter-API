@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 @NoArgsConstructor
 @Data
@@ -16,12 +18,12 @@ public class Tweet {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "author", referencedColumnName = "id")
     private User author;
 
+    @CreationTimestamp
     private Timestamp posted;
 
-    private boolean deleted;
+    private boolean deleted = false;
 
     private String content;
 
@@ -37,13 +39,17 @@ public class Tweet {
     @OneToMany(mappedBy = "repostOf")
     private List<Tweet> reposts;
 
-    @ManyToMany(mappedBy = "tweets")
+    @ManyToMany(cascade=CascadeType.MERGE)
+    @JoinTable(name="tweet_hashtags",
+            joinColumns = @JoinColumn(name="tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
     private List<Hashtag> hashtags;
 
     @ManyToMany(mappedBy = "userLikes")
     private List<User> userLikes;
 
-    @ManyToMany(mappedBy = "userMentions")
-    private List<User> userMentions;
+    @ManyToMany
+    @JoinTable(name = "user_mentions",
+            joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
+    private List<User> mentionedUsers;
 
 }

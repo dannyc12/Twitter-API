@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class HashtagDto {
 
