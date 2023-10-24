@@ -11,7 +11,7 @@ public interface HashtagMapper {
 
     HashtagDto entityToDto(Hashtag hashtag);
 
-    List<HashtagDto> entitiesToDto(List<Hashtag> entities);
+    List<HashtagDto> entitiesToDtos(List<Hashtag> entities);
 
     Hashtag requestToEntity(HashtagDto hashtagDto);
 }

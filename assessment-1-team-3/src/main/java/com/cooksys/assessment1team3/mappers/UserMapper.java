@@ -12,7 +12,7 @@ public interface UserMapper {
 
     UserResponseDto entityToDto(User user);
 
-    List<UserResponseDto> entitiesToDto(List<User> entities);
+    List<UserResponseDto> entitiesToDtos(List<User> entities);
 
-    User requestToDto(UserRequestDto userRequestDto);
+    User requestToEntity(UserRequestDto userRequestDto);
 }

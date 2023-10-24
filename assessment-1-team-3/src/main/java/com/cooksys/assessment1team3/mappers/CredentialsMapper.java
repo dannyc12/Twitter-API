@@ -14,5 +14,5 @@ public interface CredentialsMapper {
     Credentials requestToEntity(CredentialsDto credentialsDto);
 
     //I don't think we need to return a  list of credentials ever? But here it is just in case
-    List<CredentialsDto> entitiesToRequest(List<Credentials> entities);
+    List<CredentialsDto> entitiesToDtos(List<Credentials> entities);
 }
