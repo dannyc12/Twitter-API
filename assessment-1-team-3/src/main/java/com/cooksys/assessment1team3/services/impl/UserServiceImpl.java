@@ -39,4 +39,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByCredentialsUsername(username);
         return tweetRepository.findAllTweetsByUserOrderedByPostedAsc(user);
     }
+
+    public List<UserResponseDto> getAllUsers() {
+        return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
+    }
 }
