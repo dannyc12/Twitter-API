@@ -24,7 +24,7 @@ public class User {
     @Embedded
     private Credentials credentials;
 
-    @OneToMany
+    @OneToMany(mappedBy = "author")
     private List<Tweet> tweets;
 
     @ManyToMany
