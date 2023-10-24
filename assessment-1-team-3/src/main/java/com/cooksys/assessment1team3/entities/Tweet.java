@@ -15,7 +15,7 @@ public class Tweet {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "author", referencedColumnName = "id")
     private User author;
 
