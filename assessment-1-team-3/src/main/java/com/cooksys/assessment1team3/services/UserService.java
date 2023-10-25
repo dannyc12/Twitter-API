@@ -1,5 +1,7 @@
 package com.cooksys.assessment1team3.services;
 
+import com.cooksys.assessment1team3.dtos.ProfileDto;
+import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
@@ -12,6 +14,8 @@ public interface UserService {
     List<TweetResponseDto> getTweetsByUsername(String username);
 
     List<UserResponseDto> getAllUsers();
+
+    UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto);
 
     UserResponseDto deleteUserByUsername(String username, CredentialsDto credentialsDto);
 
