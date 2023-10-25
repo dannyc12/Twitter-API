@@ -51,6 +51,20 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    public void likeTweetById(Long id, CredentialsDto credentialsDto) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        User user = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        utility.validateCredentials(user, credentialsMapper.requestToEntity(credentialsDto));
+        List<Tweet> likedTweets = user.getUserLikes();
+        if (!likedTweets.contains(tweet)) {
+            likedTweets.add(tweet);
+            user.setUserLikes(likedTweets);
+            userRepository.saveAndFlush(user);
+        }
+    }
+
+    @Override
     public TweetResponseDto getTweetById(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
