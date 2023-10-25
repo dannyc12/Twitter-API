@@ -25,6 +25,11 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
+    @GetMapping("/@{username}/tweets")
+    public List<TweetResponseDto> getTweetsByUsername(@PathVariable String username) {
+        return userService.getTweetsByUsername(username);
+    }
+  
     @DeleteMapping("/@{username}")
     public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto) {
         return userService.deleteUserByUsername(username, credentialsDto);
