@@ -1,6 +1,7 @@
 package com.cooksys.assessment1team3.controllers;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,11 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
+    @GetMapping("/@{username}/tweets")
+    public List<TweetResponseDto> getTweetsByUsername(@PathVariable String username) {
+        return userService.getTweetsByUsername(username);
+    }
+  
     @DeleteMapping("/@{username}")
     public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto) {
         return userService.deleteUserByUsername(username, credentialsDto);
