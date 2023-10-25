@@ -1,21 +1,13 @@
 package com.cooksys.assessment1team3.services.impl;
 
-import com.cooksys.assessment1team3.dtos.ProfileDto;
-import com.cooksys.assessment1team3.dtos.UserRequestDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
-import com.cooksys.assessment1team3.dtos.CredentialsDto;
-import com.cooksys.assessment1team3.dtos.UserResponseDto;
-import com.cooksys.assessment1team3.entities.Tweet;
+import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.entities.User;
-
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
-
 import com.cooksys.assessment1team3.mappers.ProfileMapper;
 import com.cooksys.assessment1team3.mappers.TweetMapper;
 import com.cooksys.assessment1team3.mappers.UserMapper;
-
 import com.cooksys.assessment1team3.repositories.TweetRepository;
 import com.cooksys.assessment1team3.repositories.UserRepository;
 import com.cooksys.assessment1team3.services.UserService;
@@ -63,13 +55,13 @@ public class UserServiceImpl implements UserService {
         }
         return tweetMapper.entitiesToDtos(tweetRepository.findAllTweetsByAuthorAndDeletedIsFalseOrderByPostedDesc(user));
     }
-  
-  @Override
-  public List<UserResponseDto> getAllUsers() {
+
+    @Override
+    public List<UserResponseDto> getAllUsers() {
         return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
     }
-  
-  @Override
+
+    @Override
     public UserResponseDto deleteUserByUsername(String username, CredentialsDto credentialsDto) {
         User user = userRepository.findByCredentialsUsername(username);
         if (user == null || user.isDeleted()) {
@@ -84,6 +76,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+        String username = userRequestDto.getCredentials().getUsername();
+        if (username == null || username.isBlank()) {
+            throw new BadRequestException("Username is required.");
+        }
+        String password = userRequestDto.getCredentials().getPassword();
+        if (password == null || password.isBlank()) {
+            throw new BadRequestException("Password is required.");
+        }
+        String email = userRequestDto.getProfile().getEmail();
+        if (email == null || email.isBlank()) {
+            throw new BadRequestException("Email is required.");
+        }
+        User user = userRepository.findByCredentialsUsername(username);
+        if (user != null) {
+            if (user.isDeleted()) {
+                user.setDeleted(false);
+                userRepository.saveAndFlush(user);
+            } else {
+                throw new BadRequestException("User already exists.");
+            }
+        } else {
+            user = userRepository.saveAndFlush(userMapper.requestToEntity(userRequestDto));
+        }
+        return userMapper.entityToDto(user);
+    }
+
     public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
         // need to extract this portion as a helper method 'getUserByUsername(username)' later
         User user = userRepository.findByCredentialsUsername(username);

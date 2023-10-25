@@ -5,6 +5,7 @@ import com.cooksys.assessment1team3.dtos.*;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
 import com.cooksys.assessment1team3.services.UserService;
@@ -23,6 +24,11 @@ public class UserController {
     @GetMapping
     public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @PostMapping
+    public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
+        return userService.createUser(userRequestDto);
     }
 
     @GetMapping("/@{username}")
