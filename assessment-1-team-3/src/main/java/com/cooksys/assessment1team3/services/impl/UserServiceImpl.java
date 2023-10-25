@@ -63,13 +63,13 @@ public class UserServiceImpl implements UserService {
         }
         return tweetMapper.entitiesToDtos(tweetRepository.findAllTweetsByAuthorAndDeletedIsFalseOrderByPostedDesc(user));
     }
-  
-  @Override
-  public List<UserResponseDto> getAllUsers() {
+
+    @Override
+    public List<UserResponseDto> getAllUsers() {
         return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
     }
-  
-  @Override
+
+    @Override
     public UserResponseDto deleteUserByUsername(String username, CredentialsDto credentialsDto) {
         User user = userRepository.findByCredentialsUsername(username);
         if (user == null || user.isDeleted()) {
