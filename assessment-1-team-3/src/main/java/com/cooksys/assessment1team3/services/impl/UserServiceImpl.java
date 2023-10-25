@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
+
+    private static final String EMAIL_REGEX =
+            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+    private static final Pattern pattern = Pattern.compile(EMAIL_REGEX);
+
+    private boolean validateUserEmail(String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 
     @Override
     public UserResponseDto getUserByUsername(String username) {
@@ -54,6 +66,9 @@ public class UserServiceImpl implements UserService {
         }
         if (profileDto.getEmail() == null) {
             throw new BadRequestException("An email is required to update user profile.");
+        }
+        if (!validateUserEmail(profileDto.getEmail())) {
+            throw new BadRequestException("You must pass a valid email to update the user profile.");
         }
         user.setProfile(profileMapper.requestToEntity(profileDto));
         return userMapper.entityToDto(userRepository.saveAndFlush(user));
