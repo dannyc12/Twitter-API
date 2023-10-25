@@ -1,6 +1,7 @@
 package com.cooksys.assessment1team3.controllers;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.services.UserService;
 import lombok.RequiredArgsConstructor;
