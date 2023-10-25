@@ -1,5 +1,10 @@
 package com.cooksys.assessment1team3.services;
 
-public interface HashtagService {
+import com.cooksys.assessment1team3.dtos.HashtagDto;
+import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 
+import java.util.List;
+
+public interface HashtagService {
+    List<TweetResponseDto> getTagsByLabel(String label);
 }
