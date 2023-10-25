@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TweetRepository extends JpaRepository<Tweet, Long> {
-    List<Tweet> findAllByDeletedFalseAndHashtagsOrderByHashtags(Hashtag hashtag);
+    List<Tweet> findAllByDeletedFalseAndHashtagsOrderByPostedDesc(Hashtag hashtag);
 }

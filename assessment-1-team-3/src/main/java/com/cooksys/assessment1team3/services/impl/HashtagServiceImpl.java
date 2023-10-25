@@ -28,7 +28,7 @@ public class HashtagServiceImpl implements HashtagService {
         if (hashtag == null) {
             throw new NotFoundException("No Hashtags found with tags: " + newLabel);
         }
-        List<Tweet> tweets = tweetRepository.findAllByDeletedFalseAndHashtagsOrderByHashtags(hashtag);
+        List<Tweet> tweets = tweetRepository.findAllByDeletedFalseAndHashtagsOrderByPostedDesc(hashtag);
         List<TweetResponseDto> tweetResponseDtos = tweetMapper.entitiesToDtos(tweets);
         return tweetResponseDtos;
     }
