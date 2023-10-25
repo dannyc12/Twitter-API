@@ -103,6 +103,24 @@ public class UserServiceImpl implements UserService {
         return userMapper.entityToDto(user);
     }
 
+    @Override
+    public List<UserResponseDto> getUsersFollowing(String username) {
+        User user = userRepository.findByCredentialsUsername(username);
+        if (user == null || user.isDeleted()) {
+            throw new NotFoundException("No user found with username: " + username);
+        }
+        return userMapper.entitiesToDtos(userRepository.findAllByFollowersAndDeletedFalse(user));
+    }
+
+    @Override
+    public List<UserResponseDto> getUserFollowers(String username) {
+        User user = userRepository.findByCredentialsUsername(username);
+        if (user == null || user.isDeleted()) {
+            throw new NotFoundException("No user found with username: " + username);
+        }
+        return userMapper.entitiesToDtos(userRepository.findAllByFollowingAndDeletedFalse(user));
+    }
+
     public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
         // need to extract this portion as a helper method 'getUserByUsername(username)' later
         User user = userRepository.findByCredentialsUsername(username);

@@ -36,6 +36,15 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
+    @GetMapping("/@{username}/following")
+    public List<UserResponseDto> getUsersFollowing(@PathVariable String username) {
+        return userService.getUsersFollowing(username);
+    }
+
+    @GetMapping("/@{username}/followers")
+    public List<UserResponseDto> getUserFollowers(@PathVariable String username) {
+        return userService.getUserFollowers(username);
+    }
 
     @PatchMapping("/@{username}")
     public UserResponseDto updateUserProfile(@PathVariable String username,
