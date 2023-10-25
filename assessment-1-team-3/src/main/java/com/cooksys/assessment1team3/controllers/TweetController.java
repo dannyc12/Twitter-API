@@ -1,7 +1,7 @@
 package com.cooksys.assessment1team3.controllers;
 
-import com.cooksys.assessment1team3.dtos.ContextDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.services.TweetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +22,10 @@ public class TweetController {
         return tweetService.getTweetRepliesById(id);
     }
 
-    @GetMapping("/{id}/context")
-    public ContextDto getTweetContext(@PathVariable Long id) {
-        return tweetService.getTweetContext(id);
-    }
+   @GetMapping("/{id}/likes")
+    public List<UserResponseDto> getTweetLikes(@PathVariable Long id) {
+        return tweetService.getTweetLikes(id);
+   }
 
 
 
