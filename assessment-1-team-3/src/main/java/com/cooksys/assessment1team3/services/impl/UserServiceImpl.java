@@ -33,16 +33,6 @@ public class UserServiceImpl implements UserService {
     private final ProfileMapper profileMapper;
     private final CredentialsMapper credentialsMapper;
 
-    private static final String EMAIL_REGEX =
-            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-    private static final Pattern pattern = Pattern.compile(EMAIL_REGEX);
-
-    private boolean validateUserEmail(String email) {
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
     @Override
     public UserResponseDto getUserByUsername(String username) {
         User user = utility.getUserByUsername(username);
@@ -93,12 +83,7 @@ public class UserServiceImpl implements UserService {
         Credentials credentials = credentialsMapper.requestToEntity(userRequestDto.getCredentials());
         ProfileDto profileDto = userRequestDto.getProfile();
         utility.validateCredentials(user, credentials);
-        if (profileDto.getEmail() == null) {
-            throw new BadRequestException("An email is required to update user profile.");
-        }
-        if (!utility.validateUserEmail(profileDto.getEmail())) {
-            throw new BadRequestException("You must pass a valid email to update the user profile.");
-        }
+        utility.validateUserEmail(profileDto.getEmail());
         user.setProfile(profileMapper.requestToEntity(profileDto));
         return userMapper.entityToDto(userRepository.saveAndFlush(user));
     }
