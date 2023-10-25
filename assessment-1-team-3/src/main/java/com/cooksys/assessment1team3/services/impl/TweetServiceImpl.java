@@ -1,5 +1,6 @@
 package com.cooksys.assessment1team3.services.impl;
 
+import com.cooksys.assessment1team3.dtos.ContextDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
@@ -25,5 +26,14 @@ public class TweetServiceImpl implements TweetService {
             throw new NotFoundException("No tweet found with id: " + id);
         }
         return tweetMapper.entitiesToDtos(tweetRepository.findAllRepliesToTweet(id));
+    }
+
+    @Override
+    public ContextDto getTweetContext(Long id) {
+        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
+        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
+            throw new NotFoundException("No tweet found with id: " + id);
+        }
+
     }
 }
