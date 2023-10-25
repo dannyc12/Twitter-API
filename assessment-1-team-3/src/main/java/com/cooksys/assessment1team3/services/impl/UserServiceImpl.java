@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             if (user.isDeleted()) {
                 user.setDeleted(false);
+                userRepository.saveAndFlush(user);
             } else {
                 throw new BadRequestException("User already exists.");
             }
