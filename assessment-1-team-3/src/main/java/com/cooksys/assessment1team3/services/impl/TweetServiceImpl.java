@@ -27,6 +27,10 @@ public class TweetServiceImpl implements TweetService {
     private final CredentialsMapper credentialsMapper;
 
     @Override
+    public List<TweetResponseDto> getAllTweets() {
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
+    }
+
     public List<TweetResponseDto> getTweetRepliesById(Long id) {
         Optional<Tweet> optionalTweet = tweetRepository.findById(id);
         if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
