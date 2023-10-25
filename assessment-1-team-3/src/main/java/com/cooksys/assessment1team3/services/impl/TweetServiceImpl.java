@@ -20,7 +20,7 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public List<TweetResponseDto> getAllTweets() {
-        return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalse());
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
     }
 
     public List<TweetResponseDto> getTweetRepliesById(Long id) {
