@@ -1,13 +1,10 @@
 package com.cooksys.assessment1team3.controllers;
 
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.dtos.CredentialsDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,5 +28,10 @@ public class UserController {
     @GetMapping("/@{username}/tweets")
     public List<TweetResponseDto> getTweetsByUsername(@PathVariable String username) {
         return userService.getTweetsByUsername(username);
+    }
+  
+    @DeleteMapping("/@{username}")
+    public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto) {
+        return userService.deleteUserByUsername(username, credentialsDto);
     }
 }
