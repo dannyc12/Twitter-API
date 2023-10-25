@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface TweetService {
     List<TweetResponseDto> getAllTweets();
+
+    List<TweetResponseDto> getTweetRepliesById(Long id);
 }

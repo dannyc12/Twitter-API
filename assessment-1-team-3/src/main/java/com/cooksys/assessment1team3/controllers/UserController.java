@@ -10,6 +10,7 @@ import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
 import com.cooksys.assessment1team3.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +63,18 @@ public class UserController {
     @DeleteMapping("/@{username}")
     public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto) {
         return userService.deleteUserByUsername(username, credentialsDto);
+    }
+
+    @PostMapping("/@{username}/follow")
+    @ResponseStatus(HttpStatus.OK)
+    public void postUsernameToFollow(@PathVariable String username, @RequestBody CredentialsDto credentialsDto){
+        userService.postUsernameToFollow(username,credentialsDto);
+    }
+
+    @PostMapping("/@{username}/unfollow")
+    @ResponseStatus(HttpStatus.OK)
+    public void postUsernameToUnfollow(@PathVariable String username, @RequestBody CredentialsDto credentialsDto){
+        userService.postUsernameToUnfollow(username,credentialsDto);
     }
 
 }

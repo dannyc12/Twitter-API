@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -108,5 +106,40 @@ public class UserServiceImpl implements UserService {
         utility.validateUserEmail(profileDto.getEmail());
         user.setProfile(profileMapper.requestToEntity(profileDto));
         return userMapper.entityToDto(userRepository.saveAndFlush(user));
+    }
+
+    public void postUsernameToFollow(String username, CredentialsDto credentialsDto) {
+        User userToFollow = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(userToFollow, username);
+
+        User newFollower = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        String newUserName = credentialsDto.getUsername();
+        Credentials credentials = credentialsMapper.requestToEntity(credentialsDto);
+        utility.validateCredentials(newFollower, credentials);
+        utility.validateUserExists(newFollower, newUserName);
+
+        utility.validateUserFollower(userToFollow, newFollower);
+
+        userToFollow.getFollowers().add(newFollower);
+        userRepository.saveAndFlush(userToFollow);
+    }
+
+    @Override
+    public void postUsernameToUnfollow(String username, CredentialsDto credentialsDto) {
+        User userToFollow = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(userToFollow, username);
+
+        User newFollower = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        String newUserName = credentialsDto.getUsername();
+        Credentials credentials = credentialsMapper.requestToEntity(credentialsDto);
+        utility.validateCredentials(newFollower, credentials);
+        utility.validateUserExists(newFollower, newUserName);
+
+        if(!userToFollow.getFollowers().contains(newFollower)){
+            throw new NotAuthorizedException("You are Not following "+newUserName+ ".");
+        }
+
+        userToFollow.getFollowers().remove(newFollower);
+        userRepository.saveAndFlush(userToFollow);
     }
 }
