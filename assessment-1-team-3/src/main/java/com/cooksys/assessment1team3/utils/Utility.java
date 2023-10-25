@@ -11,13 +11,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Data
+@Component
 public class Utility {
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     private static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -32,14 +35,6 @@ public class Utility {
         if (!matcher.matches()) {
             throw new BadRequestException("You must pass a valid email to update the user profile.");
         }
-    }
-
-    public User getUserByUsername(String username) {
-        User user = userRepository.findByCredentialsUsername(username);
-        if (user == null || user.isDeleted()) {
-            throw new NotFoundException("No user found with username: " + username);
-        }
-        return user;
     }
 
     public void validateCredentials(User user, Credentials credentials) {
@@ -65,4 +60,9 @@ public class Utility {
         }
     }
 
+    public void validateUserExists(User user, String username) {
+        if (user == null || user.isDeleted()) {
+            throw new NotFoundException("No user found with username: " + username);
+        }
+    }
 }

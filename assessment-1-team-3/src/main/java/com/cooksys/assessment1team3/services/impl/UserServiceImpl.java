@@ -35,13 +35,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getUserByUsername(String username) {
-        User user = utility.getUserByUsername(username);
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
         return userMapper.entityToDto(user);
     }
 
     @Override
     public List<TweetResponseDto> getTweetsByUsername(String username) {
-        User user = utility.getUserByUsername(username);
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
         return tweetMapper.entitiesToDtos(tweetRepository.findAllTweetsByAuthorAndDeletedIsFalseOrderByPostedDesc(user));
     }
 
@@ -52,7 +54,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto deleteUserByUsername(String username, CredentialsDto credentialsDto) {
-        User user = utility.getUserByUsername(username);
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
         Credentials credentials = credentialsMapper.requestToEntity(credentialsDto);
         utility.validateCredentials(user, credentials);
         user.setDeleted(true);
@@ -79,7 +82,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
-        User user = utility.getUserByUsername(username);
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
         Credentials credentials = credentialsMapper.requestToEntity(userRequestDto.getCredentials());
         ProfileDto profileDto = userRequestDto.getProfile();
         utility.validateCredentials(user, credentials);
