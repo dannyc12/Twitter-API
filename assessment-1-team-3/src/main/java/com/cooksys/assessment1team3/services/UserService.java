@@ -4,6 +4,7 @@ import com.cooksys.assessment1team3.dtos.ProfileDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface UserService {
 
     UserResponseDto deleteUserByUsername(String username, CredentialsDto credentialsDto);
 
+    UserResponseDto createUser(UserRequestDto userRequestDto);
 }
