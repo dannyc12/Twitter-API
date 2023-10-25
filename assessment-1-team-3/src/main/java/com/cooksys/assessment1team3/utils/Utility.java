@@ -65,4 +65,10 @@ public class Utility {
             throw new NotFoundException("No user found with username: " + username);
         }
     }
+
+    public void validateUserFollower(User user, User userToCheck){
+        if(user.getFollowers().contains(userToCheck)){
+            throw new NotAuthorizedException("You are Already following "+userToCheck.getCredentials().getUsername()+ ".");
+        }
+    }
 }
