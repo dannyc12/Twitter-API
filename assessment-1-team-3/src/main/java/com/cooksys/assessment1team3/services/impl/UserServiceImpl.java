@@ -5,6 +5,7 @@ import com.cooksys.assessment1team3.dtos.ProfileDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.entities.User;
+import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
 import com.cooksys.assessment1team3.mappers.ProfileMapper;
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
         if (!user.getCredentials().getUsername().equals(credentialsDto.getUsername())
                 || !user.getCredentials().getPassword().equals(credentialsDto.getPassword())) {
             throw new NotAuthorizedException("You are not authorized to update this user.");
+        }
+        if (profileDto.getEmail() == null) {
+            throw new BadRequestException("An email is required to update user profile.");
         }
         user.setProfile(profileMapper.requestToEntity(profileDto));
         return userMapper.entityToDto(userRepository.saveAndFlush(user));
