@@ -18,4 +18,5 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 
     List<Tweet> findAllByDeletedFalseAndHashtagsOrderByPostedDesc(Hashtag hashtag);
 
+    List<Tweet> findAllByDeletedFalse();
 }
