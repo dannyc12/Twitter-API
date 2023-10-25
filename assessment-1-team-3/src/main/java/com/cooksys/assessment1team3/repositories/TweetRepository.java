@@ -18,4 +18,8 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 
     List<Tweet> findAllByDeletedFalseAndHashtagsOrderByPostedDesc(Hashtag hashtag);
 
+    @Query("SELECT t FROM Tweet t WHERE t.inReplyTo.id = :tweetId")
+    List<Tweet> findAllRepliesToTweet(Long tweetId);
+
+
 }
