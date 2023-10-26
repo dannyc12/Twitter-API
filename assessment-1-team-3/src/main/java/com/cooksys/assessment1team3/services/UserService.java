@@ -28,4 +28,6 @@ public interface UserService {
     void postUsernameToFollow(String username, CredentialsDto credentialsDto);
 
     void postUsernameToUnfollow(String username, CredentialsDto credentialsDto);
+
+    List<TweetResponseDto> getAllTweetsMentioningUser(String username);
 }

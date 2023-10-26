@@ -46,7 +46,8 @@ public class TweetController {
     @GetMapping("/{id}/tags")
     public List<HashtagDto> getHashtagsByTweet(@PathVariable Long id) {
         return tweetService.getHashtagsByTweet(id);
-
+    }
+    
     @PostMapping("/{id}/like")
     public void likeTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
         tweetService.likeTweetById(id, credentialsDto);
