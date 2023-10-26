@@ -1,7 +1,6 @@
 package com.cooksys.assessment1team3.repositories;
 
 
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.entities.Hashtag;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
@@ -19,6 +18,8 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
     List<Tweet> findAllByDeletedFalseAndHashtagsOrderByPostedDesc(Hashtag hashtag);
 
     List<Tweet> findAllByDeletedFalseOrderByPostedDesc();
+
+    List<Tweet> findAllTweetsByAuthorAndDeletedFalse(User author);
 
     @Query("SELECT t FROM Tweet t WHERE t.inReplyTo.id = :tweetId AND t.deleted = false")
     List<Tweet> findAllRepliesToTweet(Long tweetId);

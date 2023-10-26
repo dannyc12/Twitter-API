@@ -1,9 +1,7 @@
 package com.cooksys.assessment1team3.services;
 
-import com.cooksys.assessment1team3.dtos.ProfileDto;
-import com.cooksys.assessment1team3.dtos.UserRequestDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
@@ -28,4 +26,6 @@ public interface UserService {
     void postUsernameToFollow(String username, CredentialsDto credentialsDto);
 
     void postUsernameToUnfollow(String username, CredentialsDto credentialsDto);
+
+    List<TweetResponseDto> getFeedByUsername(String username);
 }
