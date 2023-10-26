@@ -21,6 +21,7 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,12 +50,21 @@ public class TweetServiceImpl implements TweetService {
     public ContextDto getTweetContext(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
-        TweetResponseDto target = tweetMapper.entityToDto(tweet);
-//        List<Tweet> before = tweetRepository;
-        List<TweetResponseDto> after = getTweetRepliesById(id);
+        // Helena says ok to create new ContextDto instance because we don't have an entity for it
         ContextDto contextDto = new ContextDto();
-        contextDto.setTarget(target);
-        contextDto.setBefore(null);
+        contextDto.setTarget(tweetMapper.entityToDto(tweet));
+
+        List<Tweet> before = new ArrayList<>();
+
+        System.out.println("assigned currentTweet: " + tweet);
+        while (tweet.getInReplyTo() != null) {
+            Tweet preceedingTweet = tweet.getInReplyTo();
+            before.add(preceedingTweet);
+            tweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
+            utility.validateTweetExists(tweet, id);
+        }
+        List<TweetResponseDto> after = getTweetRepliesById(id);
+        contextDto.setBefore(tweetMapper.entitiesToDtos(before));
         contextDto.setAfter(after);
         return contextDto;
     }
