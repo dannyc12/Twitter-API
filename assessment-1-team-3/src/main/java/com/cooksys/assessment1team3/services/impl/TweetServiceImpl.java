@@ -49,16 +49,13 @@ public class TweetServiceImpl implements TweetService {
         User user = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
         utility.validateUserExists(user, credentialsDto.getUsername());
         utility.validateCredentials(user, credentialsMapper.requestToEntity(credentialsDto));
-        Tweet repost = tweet;
+        Tweet repost = new Tweet();
         repost.setRepostOf(tweet);
         repost.setContent(null);
-        System.out.println("Trying to set user...");
         repost.setAuthor(user);
-        System.out.println("Successfully set user.");
-        tweetRepository.saveAndFlush(repost);
-        System.out.println("Successfully saved repost");
-        return null;
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(repost));
     }
+
     @Override
     public TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
