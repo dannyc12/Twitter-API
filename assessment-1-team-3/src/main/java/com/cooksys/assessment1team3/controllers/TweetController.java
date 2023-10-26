@@ -33,6 +33,11 @@ public class TweetController {
         return tweetService.getTweetLikes(id);
    }
 
+    @GetMapping("/{id}/mentions")
+    public List<UserResponseDto> getTweetMentions(@PathVariable Long id) {
+        return tweetService.getTweetMentions(id);
+    }
+
     @DeleteMapping("/{id}")
     public TweetResponseDto deleteTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
         return tweetService.deleteTweetById(id, credentialsDto);

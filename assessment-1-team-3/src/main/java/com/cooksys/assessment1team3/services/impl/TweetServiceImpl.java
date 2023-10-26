@@ -53,6 +53,13 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    public List<UserResponseDto> getTweetMentions(Long id) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        return userMapper.entitiesToDtos(tweetRepository.findAllUserMentions(id));
+    }
+
+    @Override
     public TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
