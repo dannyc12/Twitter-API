@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -48,24 +49,36 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public ContextDto getTweetContext(Long id) {
-        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
-        utility.validateTweetExists(tweet, id);
-        // Helena says ok to create new ContextDto instance because we don't have an entity for it
+        Tweet targetTweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(targetTweet, id);
+        // Helena says we're supposed to create new ContextDto instance because we don't have an entity for it
         ContextDto contextDto = new ContextDto();
-        contextDto.setTarget(tweetMapper.entityToDto(tweet));
-
-        List<Tweet> before = new ArrayList<>();
-
-        System.out.println("assigned currentTweet: " + tweet);
-        while (tweet.getInReplyTo() != null) {
-            Tweet preceedingTweet = tweet.getInReplyTo();
-            before.add(preceedingTweet);
-            tweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
-            utility.validateTweetExists(tweet, id);
+        contextDto.setBefore(new ArrayList<>());
+        contextDto.setTarget(tweetMapper.entityToDto(targetTweet));
+        // loop through each tweet build a chain of inReplyTo
+        Tweet tempTweet = targetTweet;
+        while (tempTweet.getInReplyTo() != null) {
+            Tweet preceedingTweet = tempTweet.getInReplyTo();
+            contextDto.getBefore().add(tweetMapper.entityToDto(preceedingTweet));
+            tempTweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
+            utility.validateTweetExists(tempTweet, id);
         }
-        List<TweetResponseDto> after = getTweetRepliesById(id);
-        contextDto.setBefore(tweetMapper.entitiesToDtos(before));
-        contextDto.setAfter(after);
+        // reverse Context.before to set in chronological order
+        Collections.reverse(contextDto.getBefore());
+
+        tempTweet = targetTweet;
+        List<Tweet> replies = tweetRepository.findAllRepliesToTweet(id);
+        for (Tweet replyTweet : replies) {
+            if ()
+            while
+        }
+        while (tempTweet.getInReplyTo() != null) {
+            Tweet preceedingTweet = tempTweet.getInReplyTo();
+            contextDto.getBefore().add(tweetMapper.entityToDto(preceedingTweet));
+            tempTweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
+            utility.validateTweetExists(tempTweet, id);
+        }
+        contextDto.setAfter(getTweetRepliesById(id));
         return contextDto;
     }
 
