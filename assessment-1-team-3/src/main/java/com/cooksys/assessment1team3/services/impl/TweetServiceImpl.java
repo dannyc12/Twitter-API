@@ -44,6 +44,7 @@ public class TweetServiceImpl implements TweetService {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
         User user = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        utility.validateUserExists(user, credentialsDto.getUsername());
         utility.validateCredentials(user, credentialsMapper.requestToEntity(credentialsDto));
         tweet.setDeleted(true);
         tweetRepository.saveAndFlush(tweet);
