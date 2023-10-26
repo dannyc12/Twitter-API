@@ -1,9 +1,6 @@
 package com.cooksys.assessment1team3.controllers;
 
-import com.cooksys.assessment1team3.dtos.CredentialsDto;
-import com.cooksys.assessment1team3.dtos.HashtagDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
-import com.cooksys.assessment1team3.dtos.UserResponseDto;
+import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.services.TweetService;
 
 import lombok.RequiredArgsConstructor;
@@ -65,6 +62,11 @@ public class TweetController {
     @PostMapping("/{id}/like")
     public void likeTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
         tweetService.likeTweetById(id, credentialsDto);
+    }
+
+    @PostMapping
+    public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto) {
+        return tweetService.createTweet(tweetRequestDto);
     }
 
 }
