@@ -18,10 +18,15 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 
     List<Tweet> findAllByDeletedFalseAndHashtagsOrderByPostedDesc(Hashtag hashtag);
 
+    List<Tweet> findAllByDeletedFalseOrderByPostedDesc();
+
     @Query("SELECT t FROM Tweet t WHERE t.inReplyTo.id = :tweetId AND t.deleted = false")
     List<Tweet> findAllRepliesToTweet(Long tweetId);
 
 
 //    @Query("SELECT u FROM Users u")
 //    List<User> findAllUserLikesDeletedFalse(Long id);
+
+    Tweet findByIdAndDeletedFalse(Long id);
+
 }
