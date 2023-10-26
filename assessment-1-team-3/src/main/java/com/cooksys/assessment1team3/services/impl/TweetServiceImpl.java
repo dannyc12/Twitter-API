@@ -31,16 +31,18 @@ public class TweetServiceImpl implements TweetService {
     private final TweetRepository tweetRepository;
     private final TweetMapper tweetMapper;
     private final UserMapper userMapper;
-    private final Utility utility;
+    
     private final UserRepository userRepository;
+    private final Utility utility;
     private final CredentialsMapper credentialsMapper;
     private final HashtagMapper hashtagMapper;
-
+    
     @Override
     public List<TweetResponseDto> getAllTweets() {
         return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
     }
 
+    @Override
     public List<TweetResponseDto> getTweetRepliesById(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
@@ -82,11 +84,31 @@ public class TweetServiceImpl implements TweetService {
         return contextDto;
     }
 
+    public TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        User user = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        utility.validateUserExists(user, credentialsDto.getUsername());
+        utility.validateCredentials(user, credentialsMapper.requestToEntity(credentialsDto));
+        Tweet repost = new Tweet();
+        repost.setRepostOf(tweet);
+        repost.setContent(null);
+        repost.setAuthor(user);
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(repost));
+    }
+
     @Override
     public List<UserResponseDto> getTweetLikes(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
         return userMapper.entitiesToDtos(tweetRepository.findAllUserLikes(id));
+    }
+
+    @Override
+    public List<UserResponseDto> getTweetMentions(Long id) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        return userMapper.entitiesToDtos(tweetRepository.findAllUserMentions(id));
     }
 
     @Override

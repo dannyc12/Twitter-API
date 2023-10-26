@@ -15,13 +15,18 @@ public interface TweetService {
 
     ContextDto getTweetContext(Long id);
 
+    TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto);
+
     List<UserResponseDto> getTweetLikes(Long id);
 
     TweetResponseDto getTweetById(Long id);
 
     TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto);
+
     List<HashtagDto> getHashtagsByTweet(Long id);
 
     void likeTweetById(Long id, CredentialsDto credentialsDto);
+
+    List<UserResponseDto> getTweetMentions(Long id);
 
 }
