@@ -11,4 +11,11 @@ public interface TweetService {
     List<TweetResponseDto> getTweetRepliesById(Long id);
 
     TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto);
+
+    TweetResponseDto getTweetById(Long id);
+
+    TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto);
+
+    void likeTweetById(Long id, CredentialsDto credentialsDto);
+
 }

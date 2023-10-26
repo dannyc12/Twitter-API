@@ -28,4 +28,20 @@ public class TweetController {
     public TweetResponseDto repostTweet(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
         return tweetService.repostTweet(id, credentialsDto);
     }
+
+    @DeleteMapping("/{id}")
+    public TweetResponseDto deleteTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+        return tweetService.deleteTweetById(id, credentialsDto);
+    }
+
+    @GetMapping("/{id}")
+    public TweetResponseDto getTweetById(@PathVariable Long id) {
+        return tweetService.getTweetById(id);
+    }
+
+    @PostMapping("/{id}/like")
+    public void likeTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+        tweetService.likeTweetById(id, credentialsDto);
+    }
+
 }
