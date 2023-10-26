@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,8 +77,9 @@ public class Utility {
     public List<Hashtag> getMentionedHashtags(String content, HashtagRepository hashtagRepository) {
         ArrayList<Hashtag> mentioned = new ArrayList<>();
         List<String> hashtags = filterContentForHashtags(content);
+        Timestamp currentTimestamp = Timestamp.from(Instant.now());
         for (String label: hashtags) {
-            Hashtag hashtag = hashtagRepository.findByLabel(label);
+            Hashtag hashtag = hashtagRepository.findByLabel("#"+label);
             if (hashtag == null) {
                 hashtag = new Hashtag();
                 hashtag.setLabel("#"+label);

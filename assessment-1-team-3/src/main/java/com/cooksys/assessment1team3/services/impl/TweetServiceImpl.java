@@ -1,11 +1,11 @@
 package com.cooksys.assessment1team3.services.impl;
 
+
 import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.entities.Credentials;
-import com.cooksys.assessment1team3.entities.Hashtag;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
-import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
+import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
 import com.cooksys.assessment1team3.mappers.CredentialsMapper;
 import com.cooksys.assessment1team3.mappers.HashtagMapper;
@@ -19,7 +19,6 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,7 +98,7 @@ public class TweetServiceImpl implements TweetService {
         return tweetMapper.entityToDto(tweet);
     }
 
-    @Override
+
     public void likeTweetById(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
@@ -113,7 +112,6 @@ public class TweetServiceImpl implements TweetService {
             userRepository.saveAndFlush(user);
         }
     }
-
 
     @Override
     public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
@@ -133,7 +131,28 @@ public class TweetServiceImpl implements TweetService {
 
         return tweetMapper.entityToDto(tweetRepository.saveAndFlush(toCreate));
     }
+    @Override
+    public TweetResponseDto postReplyTweetWithId(Long id, TweetRequestDto tweetRequestDto) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
 
+        String username = tweetRequestDto.getCredentials().getUsername();
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
+        Credentials credentials = credentialsMapper.requestToEntity(tweetRequestDto.getCredentials());
+        utility.validateCredentials(user, credentials);
+        String content = tweetRequestDto.getContent();
+        utility.validateContent(content);
+
+        Tweet replyTweet = tweetMapper.requestToEntity(tweetRequestDto);
+        replyTweet.setAuthor(user);
+        replyTweet.setInReplyTo(tweet);
+        replyTweet.setContent(tweetRequestDto.getContent());
+        replyTweet.setMentionedUsers(utility.getMentionedUsers(content, userRepository));
+        replyTweet.setHashtags(utility.getMentionedHashtags(content, hashtagRepository));
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(replyTweet));
+    }
     @Override
     public TweetResponseDto getTweetById(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);

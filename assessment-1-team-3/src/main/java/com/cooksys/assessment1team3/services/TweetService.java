@@ -17,6 +17,8 @@ public interface TweetService {
 
     TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto);
 
+    TweetResponseDto postReplyTweetWithId(Long id, TweetRequestDto tweetRequestDto);
+
     List<HashtagDto> getHashtagsByTweet(Long id);
 
     void likeTweetById(Long id, CredentialsDto credentialsDto);
