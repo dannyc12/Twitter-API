@@ -1,6 +1,7 @@
 package com.cooksys.assessment1team3.services;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.HashtagDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
@@ -17,5 +18,8 @@ public interface TweetService {
 
     TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto);
 
+    List<HashtagDto> getHashtagsByTweet(Long id);
+
     void likeTweetById(Long id, CredentialsDto credentialsDto);
+
 }
