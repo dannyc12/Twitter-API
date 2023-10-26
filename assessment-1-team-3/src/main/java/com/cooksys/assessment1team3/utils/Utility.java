@@ -44,6 +44,9 @@ public class Utility {
     }
 
     public void validateCredentials(User user, Credentials credentials) {
+        if (user == null || user.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
         if (!user.getCredentials().getUsername().equals(credentials.getUsername())
                 || !user.getCredentials().getPassword().equals(credentials.getPassword())) {
             // we could pass in a specific string here for each case, but we'd need another parameter
