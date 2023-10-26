@@ -1,9 +1,12 @@
 package com.cooksys.assessment1team3.services.impl;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.TweetRequestDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.entities.Credentials;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
+import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
 import com.cooksys.assessment1team3.mappers.CredentialsMapper;
 import com.cooksys.assessment1team3.mappers.TweetMapper;
@@ -48,6 +51,28 @@ public class TweetServiceImpl implements TweetService {
         tweet.setDeleted(true);
         tweetRepository.saveAndFlush(tweet);
         return tweetMapper.entityToDto(tweet);
+    }
+
+    @Override
+    public TweetResponseDto postReplayTweetWithId(Long id, TweetRequestDto tweetRequestDto) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+
+        User user = userRepository.findByCredentialsUsername(tweetRequestDto.getCredentials().getUsername());
+        List<User> userList = userRepository.findAllByDeletedFalse();
+        if (!userList.contains(user))
+            throw new NotFoundException("User do not exist or is deleted");
+        if(!user.getCredentials().getPassword().equals(tweetRequestDto.getCredentials().getPassword()))
+            throw new NotFoundException("Password do not match");
+        if (tweetRequestDto.getContent() == null || tweetRequestDto.getContent().isEmpty())
+            throw new BadRequestException("There is no Content in the request");
+
+        Tweet replyTweet = new Tweet();
+        replyTweet.setAuthor(user);
+        replyTweet.setInReplyTo(tweet);
+        replyTweet.setContent(tweetRequestDto.getContent());
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(replyTweet));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.cooksys.assessment1team3.controllers;
 
-import com.cooksys.assessment1team3.dtos.CredentialsDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.services.impl.TweetServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,4 +34,8 @@ public class TweetController {
         return tweetService.getTweetById(id);
     }
 
+    @PostMapping("/{id}/reply")
+    public TweetResponseDto postReplayTweetWithId(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto) {
+        return tweetService.postReplayTweetWithId(id, tweetRequestDto);
+    }
 }
