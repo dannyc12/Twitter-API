@@ -50,17 +50,23 @@ public class TweetServiceImpl implements TweetService {
         // Helena says we're supposed to create new ContextDto instance because we don't have an entity for it
         ContextDto contextDto = new ContextDto();
         contextDto.setBefore(new ArrayList<>());
+        List<Tweet> beforeTweets = new ArrayList<>();
         contextDto.setTarget(tweetMapper.entityToDto(targetTweet));
         // loop through each tweet build a chain of inReplyTo
         Tweet tempTweet = targetTweet;
         while (tempTweet.getInReplyTo() != null) {
             Tweet preceedingTweet = tempTweet.getInReplyTo();
-            contextDto.getBefore().add(tweetMapper.entityToDto(preceedingTweet));
-            tempTweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
-            utility.validateTweetExists(tempTweet, id);
+//            contextDto.getBefore().add(tweetMapper.entityToDto(preceedingTweet));
+//            tempTweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
+//            utility.validateTweetExists(tempTweet, id);
+            beforeTweets.add(preceedingTweet);
+            tempTweet = preceedingTweet;
         }
+        // remove tweets that have been deleted
+        beforeTweets.removeIf(Tweet::isDeleted);
         // reverse Context.before to set in chronological order
-        Collections.reverse(contextDto.getBefore());
+        Collections.reverse(beforeTweets);
+        contextDto.setBefore(tweetMapper.entitiesToDtos(beforeTweets));
 
         List<Tweet> repliesToTarget = targetTweet.getReplies();
         int index = 0;
@@ -73,6 +79,8 @@ public class TweetServiceImpl implements TweetService {
             }
             index++;
         }
+        // remove any replies that have been 'deleted'
+        repliesToTarget.removeIf(Tweet::isDeleted);
         // sort the repliesToTarget by posted
         Collections.sort(repliesToTarget, new Comparator<Tweet>() {
             @Override
