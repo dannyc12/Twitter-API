@@ -147,6 +147,6 @@ public class UserServiceImpl implements UserService {
     public List<TweetResponseDto> getAllTweetsMentioningUser(String username) {
         User user = userRepository.findByCredentialsUsername(username);
         utility.validateUserExists(user, username);
-        return tweetMapper.entitiesToDtos(tweetRepository.findAllByUserMentionsAndDeletedFalseOrderByPostedDesc(user));
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllByMentionedUsersAndDeletedFalseOrderByPostedDesc(user));
     }
 }
