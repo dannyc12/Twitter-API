@@ -6,7 +6,6 @@ import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
 import com.cooksys.assessment1team3.services.TweetService;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +26,10 @@ public class TweetController {
     public List<TweetResponseDto> getTweetRepliesById(@PathVariable Long id) {
         return tweetService.getTweetRepliesById(id);
     }
+
+    @PostMapping("/{id}/repost")
+    public TweetResponseDto repostTweet(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+        return tweetService.repostTweet(id, credentialsDto);
 
    @GetMapping("/{id}/likes")
     public List<UserResponseDto> getTweetLikes(@PathVariable Long id) {
