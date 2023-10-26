@@ -1,13 +1,10 @@
 package com.cooksys.assessment1team3.controllers;
 
 
-import com.cooksys.assessment1team3.dtos.*;
-
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.dtos.UserResponseDto;
-
 import com.cooksys.assessment1team3.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -52,6 +49,10 @@ public class UserController {
                                              @RequestBody UserRequestDto userRequestDto) {
         return userService.updateUserProfile(username, userRequestDto);
     }
+
+    @GetMapping("/@{username}/feed")
+    public List<TweetResponseDto> getFeedByUsername(@PathVariable String username){
+        return userService.getFeedByUsername(username);
 
     @GetMapping("/@{username}/mentions")
     public List<TweetResponseDto> getAllTweetsMentioningUser(@PathVariable String username) {
