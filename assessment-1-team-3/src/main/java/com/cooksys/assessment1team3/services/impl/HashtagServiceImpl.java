@@ -29,7 +29,7 @@ public class HashtagServiceImpl implements HashtagService {
 
     @Override
     public List<TweetResponseDto> getTagsByLabel(String label) {
-        String newLabel = "#"+label;
+        String newLabel = label;
         Hashtag hashtag = hashtagRepository.findByLabel(newLabel);
         if (hashtag == null) {
             throw new NotFoundException("No Hashtags found with tags: " + newLabel);

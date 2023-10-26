@@ -1,5 +1,6 @@
 package com.cooksys.assessment1team3.utils;
 
+import com.cooksys.assessment1team3.dtos.TweetRequestDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.entities.Credentials;
 import com.cooksys.assessment1team3.entities.Hashtag;
@@ -89,15 +90,20 @@ public class Utility {
         }
     }
 
+    public void validateCreateTweet(TweetRequestDto tweetRequestDto) {
+        if (tweetRequestDto.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
+    }
+
     public List<Hashtag> getMentionedHashtags(String content, HashtagRepository hashtagRepository) {
         ArrayList<Hashtag> mentioned = new ArrayList<>();
         List<String> hashtags = filterContentForHashtags(content);
-        Timestamp currentTimestamp = Timestamp.from(Instant.now());
         for (String label: hashtags) {
-            Hashtag hashtag = hashtagRepository.findByLabel("#"+label);
+            Hashtag hashtag = hashtagRepository.findByLabel(label);
             if (hashtag == null) {
                 hashtag = new Hashtag();
-                hashtag.setLabel("#"+label);
+                hashtag.setLabel(label);
                 hashtagRepository.saveAndFlush(hashtag);
             }
             mentioned.add(hashtag);
