@@ -2,6 +2,7 @@ package com.cooksys.assessment1team3.services.impl;
 
 import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.entities.Credentials;
+import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
@@ -17,6 +18,8 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -43,6 +46,26 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByCredentialsUsername(username);
         utility.validateUserExists(user, username);
         return tweetMapper.entitiesToDtos(tweetRepository.findAllTweetsByAuthorAndDeletedIsFalseOrderByPostedDesc(user));
+    }
+
+    @Override
+    public List<TweetResponseDto> getFeedByUsername(String username) {
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
+
+        List<User> followingusers = userRepository.findAllByFollowersAndDeletedFalse(user);
+        List<Tweet> listUserTweets = tweetRepository.findAllTweetsByAuthorAndDeletedFalse(user);
+        List<Tweet> tweetList = new ArrayList<>();
+        for (User users: followingusers){
+            if (!user.isDeleted()){
+                List<Tweet> tempList = tweetRepository.findAllTweetsByAuthorAndDeletedFalse(users);
+                tweetList.addAll(tempList);
+            }
+        }
+        tweetList.addAll(listUserTweets);
+        tweetList.sort(Comparator.comparing(Tweet::getPosted).reversed());
+
+        return tweetMapper.entitiesToDtos(tweetList);
     }
 
     @Override
@@ -142,4 +165,12 @@ public class UserServiceImpl implements UserService {
         userToFollow.getFollowers().remove(newFollower);
         userRepository.saveAndFlush(userToFollow);
     }
+
+    @Override
+    public List<TweetResponseDto> getAllTweetsMentioningUser(String username) {
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllByMentionedUsersAndDeletedFalseOrderByPostedDesc(user));
+    }
+
 }

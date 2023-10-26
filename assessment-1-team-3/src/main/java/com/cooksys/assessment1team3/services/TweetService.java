@@ -1,10 +1,6 @@
 package com.cooksys.assessment1team3.services;
 
-import com.cooksys.assessment1team3.dtos.ContextDto;
-import com.cooksys.assessment1team3.dtos.CredentialsDto;
-import com.cooksys.assessment1team3.dtos.HashtagDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
-import com.cooksys.assessment1team3.dtos.UserResponseDto;
+import com.cooksys.assessment1team3.dtos.*;
 
 import java.util.List;
 
@@ -23,10 +19,15 @@ public interface TweetService {
 
     TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto);
 
+    TweetResponseDto postReplyTweetWithId(Long id, TweetRequestDto tweetRequestDto);
+
     List<HashtagDto> getHashtagsByTweet(Long id);
 
     void likeTweetById(Long id, CredentialsDto credentialsDto);
 
-    List<UserResponseDto> getTweetMentions(Long id);
+    TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
 
+    List<TweetResponseDto> getTweetRepostsById(Long id);
+
+    List<UserResponseDto> getTweetMentions(Long id);
 }
