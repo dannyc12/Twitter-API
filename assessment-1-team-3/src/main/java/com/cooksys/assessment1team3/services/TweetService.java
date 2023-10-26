@@ -12,6 +12,8 @@ public interface TweetService {
 
     List<TweetResponseDto> getTweetRepliesById(Long id);
 
+    TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto);
+
     List<UserResponseDto> getTweetLikes(Long id);
 
     TweetResponseDto getTweetById(Long id);
@@ -21,5 +23,7 @@ public interface TweetService {
     List<HashtagDto> getHashtagsByTweet(Long id);
 
     void likeTweetById(Long id, CredentialsDto credentialsDto);
+
+    List<UserResponseDto> getTweetMentions(Long id);
 
 }
