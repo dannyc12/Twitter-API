@@ -54,7 +54,7 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public TweetResponseDto postReplayTweetWithId(Long id, TweetRequestDto tweetRequestDto) {
+    public TweetResponseDto postReplyTweetWithId(Long id, TweetRequestDto tweetRequestDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
 
@@ -67,7 +67,7 @@ public class TweetServiceImpl implements TweetService {
         if (tweetRequestDto.getContent() == null || tweetRequestDto.getContent().isEmpty())
             throw new BadRequestException("There is no Content in the request");
 
-        Tweet replyTweet = new Tweet();
+        Tweet replyTweet = tweetMapper.requestToEntity(tweetRequestDto);
         replyTweet.setAuthor(user);
         replyTweet.setInReplyTo(tweet);
         replyTweet.setContent(tweetRequestDto.getContent());

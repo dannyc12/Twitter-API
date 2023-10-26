@@ -35,7 +35,7 @@ public class TweetController {
     }
 
     @PostMapping("/{id}/reply")
-    public TweetResponseDto postReplayTweetWithId(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto) {
-        return tweetService.postReplayTweetWithId(id, tweetRequestDto);
+    public TweetResponseDto postReplyTweetWithId(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto) {
+        return tweetService.postReplyTweetWithId(id, tweetRequestDto);
     }
 }
