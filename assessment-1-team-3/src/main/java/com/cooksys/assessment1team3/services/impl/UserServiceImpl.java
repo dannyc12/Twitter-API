@@ -166,4 +166,11 @@ public class UserServiceImpl implements UserService {
         userRepository.saveAndFlush(userToFollow);
     }
 
+    @Override
+    public List<TweetResponseDto> getAllTweetsMentioningUser(String username) {
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllByMentionedUsersAndDeletedFalseOrderByPostedDesc(user));
+    }
+
 }
