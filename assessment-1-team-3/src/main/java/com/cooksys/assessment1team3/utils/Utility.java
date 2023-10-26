@@ -2,6 +2,7 @@ package com.cooksys.assessment1team3.utils;
 
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.entities.Credentials;
+import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
@@ -63,6 +64,18 @@ public class Utility {
     public void validateUserExists(User user, String username) {
         if (user == null || user.isDeleted()) {
             throw new NotFoundException("No user found with username: " + username);
+        }
+    }
+
+    public void validateTweetExists(Tweet tweet, Long id) {
+        if (tweet == null || tweet.isDeleted()) {
+            throw new NotFoundException("No tweet found with id: " + id);
+        }
+    }
+
+    public void validateUserFollower(User user, User userToCheck){
+        if(user.getFollowers().contains(userToCheck)){
+            throw new NotAuthorizedException("You are Already following "+userToCheck.getCredentials().getUsername()+ ".");
         }
     }
 }
