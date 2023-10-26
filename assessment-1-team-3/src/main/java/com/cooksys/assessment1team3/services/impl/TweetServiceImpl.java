@@ -21,9 +21,7 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +34,7 @@ public class TweetServiceImpl implements TweetService {
     private final Utility utility;
     private final CredentialsMapper credentialsMapper;
     private final HashtagMapper hashtagMapper;
-    
+
     @Override
     public List<TweetResponseDto> getAllTweets() {
         return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
@@ -68,19 +66,25 @@ public class TweetServiceImpl implements TweetService {
         // reverse Context.before to set in chronological order
         Collections.reverse(contextDto.getBefore());
 
-        tempTweet = targetTweet;
-        List<Tweet> replies = tweetRepository.findAllRepliesToTweet(id);
-        for (Tweet replyTweet : replies) {
-            if ()
-            while
+        List<Tweet> repliesToTarget = targetTweet.getReplies();
+        int index = 0;
+        // replies.size() changes as we add, so the list will keep growing until there are no replies left to add
+        while (index < repliesToTarget.size()) {
+            Tweet currentTweet = repliesToTarget.get(index);
+            List<Tweet> currentReplies = currentTweet.getReplies();
+            if (currentReplies != null && !currentReplies.isEmpty()) {
+                repliesToTarget.addAll(currentReplies);
+            }
+            index++;
         }
-        while (tempTweet.getInReplyTo() != null) {
-            Tweet preceedingTweet = tempTweet.getInReplyTo();
-            contextDto.getBefore().add(tweetMapper.entityToDto(preceedingTweet));
-            tempTweet = tweetRepository.findByIdAndDeletedFalse(preceedingTweet.getId());
-            utility.validateTweetExists(tempTweet, id);
-        }
-        contextDto.setAfter(getTweetRepliesById(id));
+        // sort the repliesToTarget by posted
+        Collections.sort(repliesToTarget, new Comparator<Tweet>() {
+            @Override
+            public int compare(Tweet tweet1, Tweet tweet2) {
+                return tweet1.getPosted().compareTo(tweet2.getPosted());
+            }
+        });
+        contextDto.setAfter(tweetMapper.entitiesToDtos(repliesToTarget));
         return contextDto;
     }
 
