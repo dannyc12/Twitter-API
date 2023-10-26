@@ -1,5 +1,6 @@
 package com.cooksys.assessment1team3.utils;
 
+import com.cooksys.assessment1team3.dtos.TweetRequestDto;
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.entities.Credentials;
 import com.cooksys.assessment1team3.entities.Hashtag;
@@ -43,6 +44,9 @@ public class Utility {
     }
 
     public void validateCredentials(User user, Credentials credentials) {
+        if (user == null || user.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
         if (!user.getCredentials().getUsername().equals(credentials.getUsername())
                 || !user.getCredentials().getPassword().equals(credentials.getPassword())) {
             // we could pass in a specific string here for each case, but we'd need another parameter
@@ -74,15 +78,35 @@ public class Utility {
         return mentioned;
     }
 
+    public void validateCreateUser(UserRequestDto userRequestDto) {
+        if (userRequestDto == null) {
+            throw new BadRequestException("Profile and Credentials are required.");
+        }
+        if (userRequestDto.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
+        if (userRequestDto.getProfile() == null) {
+            throw new BadRequestException("Profile is required.");
+        }
+        if (userRequestDto.getProfile().getEmail() == null || userRequestDto.getProfile().getEmail().isBlank()) {
+            throw new BadRequestException("Email is required.");
+        }
+    }
+
+    public void validateCreateTweet(TweetRequestDto tweetRequestDto) {
+        if (tweetRequestDto.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
+    }
+
     public List<Hashtag> getMentionedHashtags(String content, HashtagRepository hashtagRepository) {
         ArrayList<Hashtag> mentioned = new ArrayList<>();
         List<String> hashtags = filterContentForHashtags(content);
-        Timestamp currentTimestamp = Timestamp.from(Instant.now());
         for (String label: hashtags) {
-            Hashtag hashtag = hashtagRepository.findByLabel("#"+label);
+            Hashtag hashtag = hashtagRepository.findByLabel(label);
             if (hashtag == null) {
                 hashtag = new Hashtag();
-                hashtag.setLabel("#"+label);
+                hashtag.setLabel(label);
                 hashtagRepository.saveAndFlush(hashtag);
             }
             mentioned.add(hashtag);

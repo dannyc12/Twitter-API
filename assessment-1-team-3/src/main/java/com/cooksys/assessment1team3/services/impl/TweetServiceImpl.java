@@ -162,6 +162,7 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
+        utility.validateCreateTweet(tweetRequestDto);
         String username = tweetRequestDto.getCredentials().getUsername();
         User user = userRepository.findByCredentialsUsername(username);
         utility.validateUserExists(user, username);

@@ -85,6 +85,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
+        utility.validateCreateUser(userRequestDto);
         String username = userRequestDto.getCredentials().getUsername();
         utility.validateUserRequest(userRequestDto);
         // leaving this because it's a special case
@@ -123,11 +124,24 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUserProfile(String username, UserRequestDto userRequestDto) {
         User user = userRepository.findByCredentialsUsername(username);
         utility.validateUserExists(user, username);
+        if (userRequestDto.getProfile() == null || userRequestDto.getCredentials() == null) {
+            throw new BadRequestException("You must pass a user profile and user credentials");
+        }
         Credentials credentials = credentialsMapper.requestToEntity(userRequestDto.getCredentials());
         ProfileDto profileDto = userRequestDto.getProfile();
         utility.validateCredentials(user, credentials);
-        utility.validateUserEmail(profileDto.getEmail());
-        user.setProfile(profileMapper.requestToEntity(profileDto));
+        if (profileDto.getEmail() != null) {
+            user.getProfile().setEmail(profileDto.getEmail());
+        }
+        if (profileDto.getPhone() != null) {
+            user.getProfile().setPhone(profileDto.getPhone());
+        }
+        if (profileDto.getFirstName() != null) {
+            user.getProfile().setFirstName(profileDto.getFirstName());
+        }
+        if (profileDto.getLastName() != null) {
+            user.getProfile().setLastName(profileDto.getLastName());
+        }
         return userMapper.entityToDto(userRepository.saveAndFlush(user));
     }
 
