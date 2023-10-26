@@ -1,11 +1,13 @@
 package com.cooksys.assessment1team3.services.impl;
 
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
+import com.cooksys.assessment1team3.dtos.HashtagDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
 import com.cooksys.assessment1team3.mappers.CredentialsMapper;
+import com.cooksys.assessment1team3.mappers.HashtagMapper;
 import com.cooksys.assessment1team3.mappers.TweetMapper;
 import com.cooksys.assessment1team3.repositories.TweetRepository;
 import com.cooksys.assessment1team3.repositories.UserRepository;
@@ -25,6 +27,7 @@ public class TweetServiceImpl implements TweetService {
     private final Utility utility;
     private final UserRepository userRepository;
     private final CredentialsMapper credentialsMapper;
+    private final HashtagMapper hashtagMapper;
 
     @Override
     public List<TweetResponseDto> getAllTweets() {
@@ -55,5 +58,12 @@ public class TweetServiceImpl implements TweetService {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
         return tweetMapper.entityToDto(tweetRepository.findByIdAndDeletedFalse(id));
+    }
+
+    @Override
+    public List<HashtagDto> getHashtagsByTweet(Long id) {
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        return hashtagMapper.entitiesToDtos(tweet.getHashtags());
     }
 }
