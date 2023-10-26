@@ -11,7 +11,6 @@ public interface TweetService {
 
     List<TweetResponseDto> getTweetRepliesById(Long id);
 
-
     List<UserResponseDto> getTweetLikes(Long id);
 
     TweetResponseDto getTweetById(Long id);

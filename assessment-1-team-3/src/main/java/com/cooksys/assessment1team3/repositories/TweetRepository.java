@@ -23,10 +23,8 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
     @Query("SELECT t FROM Tweet t WHERE t.inReplyTo.id = :tweetId AND t.deleted = false")
     List<Tweet> findAllRepliesToTweet(Long tweetId);
 
-
-//    @Query("SELECT u FROM Users u")
-//    List<User> findAllUserLikesDeletedFalse(Long id);
-
     Tweet findByIdAndDeletedFalse(Long id);
 
+    @Query("SELECT u FROM User u JOIN u.userLikes t WHERE t.id = :tweetId AND u.deleted = false")
+    List<User> findAllUserLikes(@Param("tweetId") Long id);
 }
