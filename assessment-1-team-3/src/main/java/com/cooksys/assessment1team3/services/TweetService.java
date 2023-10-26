@@ -9,6 +9,8 @@ public interface TweetService {
 
     List<TweetResponseDto> getTweetRepliesById(Long id);
 
+    ContextDto getTweetContext(Long id);
+
     TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto);
 
     List<UserResponseDto> getTweetLikes(Long id);

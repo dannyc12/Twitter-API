@@ -1,5 +1,8 @@
 package com.cooksys.assessment1team3.services.impl;
 
+import com.cooksys.assessment1team3.entities.Tweet;
+import com.cooksys.assessment1team3.entities.User;
+
 
 import com.cooksys.assessment1team3.dtos.*;
 import com.cooksys.assessment1team3.entities.Credentials;
@@ -7,6 +10,7 @@ import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
+
 import com.cooksys.assessment1team3.mappers.CredentialsMapper;
 import com.cooksys.assessment1team3.mappers.HashtagMapper;
 import com.cooksys.assessment1team3.mappers.TweetMapper;
@@ -19,8 +23,10 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +41,6 @@ public class TweetServiceImpl implements TweetService {
     private final HashtagMapper hashtagMapper;
     private final HashtagRepository hashtagRepository;
 
-
     @Override
     public List<TweetResponseDto> getAllTweets() {
         return tweetMapper.entitiesToDtos(tweetRepository.findAllByDeletedFalseOrderByPostedDesc());
@@ -43,11 +48,55 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public List<TweetResponseDto> getTweetRepliesById(Long id) {
-        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
-        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
-            throw new NotFoundException("No tweet found with id: " + id);
-        }
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
         return tweetMapper.entitiesToDtos(tweetRepository.findAllRepliesToTweet(id));
+    }
+
+    @Override
+    public ContextDto getTweetContext(Long id) {
+        Tweet targetTweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(targetTweet, id);
+        // Helena says we're supposed to create new ContextDto instance because we don't have an entity for it
+        ContextDto contextDto = new ContextDto();
+        contextDto.setBefore(new ArrayList<>());
+        List<Tweet> beforeTweets = new ArrayList<>();
+        contextDto.setTarget(tweetMapper.entityToDto(targetTweet));
+        // loop through each tweet build a chain of inReplyTo
+        Tweet tempTweet = targetTweet;
+        while (tempTweet.getInReplyTo() != null) {
+            Tweet preceedingTweet = tempTweet.getInReplyTo();
+            beforeTweets.add(preceedingTweet);
+            tempTweet = preceedingTweet;
+        }
+        // remove tweets that have been deleted
+        beforeTweets.removeIf(Tweet::isDeleted);
+        // reverse Context.before to set in chronological order
+        Collections.reverse(beforeTweets);
+        contextDto.setBefore(tweetMapper.entitiesToDtos(beforeTweets));
+
+        List<Tweet> repliesToTarget = targetTweet.getReplies();
+        int index = 0;
+        // replies.size() changes as we add, so the list will keep growing until there are no replies left to add
+        while (index < repliesToTarget.size()) {
+            Tweet currentTweet = repliesToTarget.get(index);
+            List<Tweet> currentReplies = currentTweet.getReplies();
+            if (currentReplies != null && !currentReplies.isEmpty()) {
+                repliesToTarget.addAll(currentReplies);
+            }
+            index++;
+        }
+        // remove any replies that have been 'deleted'
+        repliesToTarget.removeIf(Tweet::isDeleted);
+        // sort the repliesToTarget by posted
+        Collections.sort(repliesToTarget, new Comparator<Tweet>() {
+            @Override
+            public int compare(Tweet tweet1, Tweet tweet2) {
+                return tweet1.getPosted().compareTo(tweet2.getPosted());
+            }
+        });
+        contextDto.setAfter(tweetMapper.entitiesToDtos(repliesToTarget));
+        return contextDto;
     }
 
     @Override
@@ -59,6 +108,7 @@ public class TweetServiceImpl implements TweetService {
         return tweetMapper.entitiesToDtos(tweetRepository.findAllRepostsToTweet(id));
     }
 
+    @Override
     public TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
@@ -71,7 +121,7 @@ public class TweetServiceImpl implements TweetService {
         repost.setAuthor(user);
         return tweetMapper.entityToDto(tweetRepository.saveAndFlush(repost));
     }
-  
+
     @Override
     public List<UserResponseDto> getTweetLikes(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
@@ -98,7 +148,7 @@ public class TweetServiceImpl implements TweetService {
         return tweetMapper.entityToDto(tweet);
     }
 
-
+    @Override
     public void likeTweetById(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
@@ -131,6 +181,7 @@ public class TweetServiceImpl implements TweetService {
 
         return tweetMapper.entityToDto(tweetRepository.saveAndFlush(toCreate));
     }
+  
     @Override
     public TweetResponseDto postReplyTweetWithId(Long id, TweetRequestDto tweetRequestDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
@@ -153,6 +204,7 @@ public class TweetServiceImpl implements TweetService {
 
         return tweetMapper.entityToDto(tweetRepository.saveAndFlush(replyTweet));
     }
+  
     @Override
     public TweetResponseDto getTweetById(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);

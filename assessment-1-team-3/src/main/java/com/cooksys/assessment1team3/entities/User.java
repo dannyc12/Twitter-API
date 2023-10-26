@@ -38,7 +38,6 @@ public class User {
     @ManyToMany(mappedBy="followers")
     private List<User> following;
 
-
     @ManyToMany
     @JoinTable(name = "user_likes",
             joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
