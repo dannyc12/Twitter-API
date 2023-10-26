@@ -44,26 +44,20 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto) {
-        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
-        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
-            throw new NotFoundException("No tweet found with id: " + id);
-        }
-        System.out.println(credentialsDto.getUsername());
-        String username = credentialsDto.getUsername();
-//        Credentials credentials = credentialsMapper.requestToEntity(credentialsDto);
-        // validate user exists
-        User author = userRepository.findByCredentialsUsername(username);
-        utility.validateUserExists(author, username);
-        if (!author.getCredentials().getUsername().equals(credentialsDto.getUsername())
-                || !author.getCredentials().getPassword().equals(credentialsDto.getPassword())
-        ) {
-            throw new NotAuthorizedException("You are not authorized to repost this tweet.");
-        }
-        Tweet tweet = optionalTweet.get();
-        tweet.setRepostOf(optionalTweet.get());
-        tweet.setContent(null);
-        tweet.setAuthor(author);
-        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        User user = userRepository.findByCredentialsUsername(credentialsDto.getUsername());
+        utility.validateUserExists(user, credentialsDto.getUsername());
+        utility.validateCredentials(user, credentialsMapper.requestToEntity(credentialsDto));
+        Tweet repost = tweet;
+        repost.setRepostOf(tweet);
+        repost.setContent(null);
+        System.out.println("Trying to set user...");
+        repost.setAuthor(user);
+        System.out.println("Successfully set user.");
+        tweetRepository.saveAndFlush(repost);
+        System.out.println("Successfully saved repost");
+        return null;
     }
     @Override
     public TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto) {
