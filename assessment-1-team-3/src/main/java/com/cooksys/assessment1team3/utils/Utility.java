@@ -79,7 +79,7 @@ public class Utility {
             Hashtag hashtag = hashtagRepository.findByLabel(label);
             if (hashtag == null) {
                 hashtag = new Hashtag();
-                hashtag.setLabel(label);
+                hashtag.setLabel("#"+label);
                 hashtagRepository.saveAndFlush(hashtag);
             }
             mentioned.add(hashtag);
