@@ -46,6 +46,15 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    public List<TweetResponseDto> getTweetRepostsById(Long id) {
+        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
+        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
+            throw new NotFoundException("No tweet found with id: " + id);
+        }
+        return tweetMapper.entitiesToDtos(tweetRepository.findAllRepostsToTweet(id));
+    }
+
+    @Override
     public List<UserResponseDto> getTweetLikes(Long id) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
         utility.validateTweetExists(tweet, id);
@@ -78,6 +87,7 @@ public class TweetServiceImpl implements TweetService {
             userRepository.saveAndFlush(user);
         }
     }
+
 
     @Override
     public TweetResponseDto getTweetById(Long id) {
