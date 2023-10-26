@@ -1,9 +1,13 @@
 package com.cooksys.assessment1team3.controllers;
+import com.cooksys.assessment1team3.services.TweetService;
+
 import com.cooksys.assessment1team3.dtos.ContextDto;
 import com.cooksys.assessment1team3.dtos.CredentialsDto;
 import com.cooksys.assessment1team3.dtos.TweetResponseDto;
+import com.cooksys.assessment1team3.dtos.HashtagDto;
+import com.cooksys.assessment1team3.dtos.UserResponseDto;
 
-import com.cooksys.assessment1team3.services.TweetService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +34,11 @@ public class TweetController {
         return tweetService.getTweetContext(id);
     }
 
+   @GetMapping("/{id}/likes")
+    public List<UserResponseDto> getTweetLikes(@PathVariable Long id) {
+        return tweetService.getTweetLikes(id);
+   }
+
     @DeleteMapping("/{id}")
     public TweetResponseDto deleteTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
         return tweetService.deleteTweetById(id, credentialsDto);
@@ -38,5 +47,15 @@ public class TweetController {
     @GetMapping("/{id}")
     public TweetResponseDto getTweetById(@PathVariable Long id) {
         return tweetService.getTweetById(id);
+    }
+
+    @GetMapping("/{id}/tags")
+    public List<HashtagDto> getHashtagsByTweet(@PathVariable Long id) {
+        return tweetService.getHashtagsByTweet(id);
+    }
+
+    @PostMapping("/{id}/like")
+    public void likeTweetById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+        tweetService.likeTweetById(id, credentialsDto);
     }
 }
