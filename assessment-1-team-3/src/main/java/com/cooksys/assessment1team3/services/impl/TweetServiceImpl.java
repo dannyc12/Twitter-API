@@ -1,9 +1,8 @@
 package com.cooksys.assessment1team3.services.impl;
 
-import com.cooksys.assessment1team3.dtos.CredentialsDto;
-import com.cooksys.assessment1team3.dtos.HashtagDto;
-import com.cooksys.assessment1team3.dtos.TweetResponseDto;
-import com.cooksys.assessment1team3.dtos.UserResponseDto;
+import com.cooksys.assessment1team3.dtos.*;
+import com.cooksys.assessment1team3.entities.Credentials;
+import com.cooksys.assessment1team3.entities.Hashtag;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
@@ -11,6 +10,7 @@ import com.cooksys.assessment1team3.mappers.CredentialsMapper;
 import com.cooksys.assessment1team3.mappers.HashtagMapper;
 import com.cooksys.assessment1team3.mappers.TweetMapper;
 import com.cooksys.assessment1team3.mappers.UserMapper;
+import com.cooksys.assessment1team3.repositories.HashtagRepository;
 import com.cooksys.assessment1team3.repositories.TweetRepository;
 import com.cooksys.assessment1team3.repositories.UserRepository;
 import com.cooksys.assessment1team3.services.TweetService;
@@ -18,6 +18,7 @@ import com.cooksys.assessment1team3.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class TweetServiceImpl implements TweetService {
     private final UserRepository userRepository;
     private final CredentialsMapper credentialsMapper;
     private final HashtagMapper hashtagMapper;
+    private final HashtagRepository hashtagRepository;
 
     @Override
     public List<TweetResponseDto> getAllTweets() {
@@ -77,6 +79,25 @@ public class TweetServiceImpl implements TweetService {
             user.setUserLikes(likedTweets);
             userRepository.saveAndFlush(user);
         }
+    }
+
+    @Override
+    public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
+        String username = tweetRequestDto.getCredentials().getUsername();
+        User user = userRepository.findByCredentialsUsername(username);
+        utility.validateUserExists(user, username);
+        Credentials credentials = credentialsMapper.requestToEntity(tweetRequestDto.getCredentials());
+        utility.validateCredentials(user, credentials);
+
+        Tweet toCreate = new Tweet();
+        toCreate.setAuthor(user);
+        String content = tweetRequestDto.getContent();
+        utility.validateContent(content);
+        toCreate.setContent(content);
+        toCreate.setMentionedUsers(utility.getMentionedUsers(content, userRepository));
+        toCreate.setHashtags(utility.getMentionedHashtags(content, hashtagRepository));
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(toCreate));
     }
 
     @Override

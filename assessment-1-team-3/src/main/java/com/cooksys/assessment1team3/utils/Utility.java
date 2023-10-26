@@ -2,11 +2,13 @@ package com.cooksys.assessment1team3.utils;
 
 import com.cooksys.assessment1team3.dtos.UserRequestDto;
 import com.cooksys.assessment1team3.entities.Credentials;
+import com.cooksys.assessment1team3.entities.Hashtag;
 import com.cooksys.assessment1team3.entities.Tweet;
 import com.cooksys.assessment1team3.entities.User;
 import com.cooksys.assessment1team3.exceptions.BadRequestException;
 import com.cooksys.assessment1team3.exceptions.NotAuthorizedException;
 import com.cooksys.assessment1team3.exceptions.NotFoundException;
+import com.cooksys.assessment1team3.repositories.HashtagRepository;
 import com.cooksys.assessment1team3.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,8 +25,6 @@ import java.util.regex.Pattern;
 @Data
 @Component
 public class Utility {
-    private UserRepository userRepository;
-
     private static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -46,6 +48,53 @@ public class Utility {
         }
     }
 
+    private List<String> filterByStartingCharacters(String filterBy, String toFilter) {
+        ArrayList<String> results = new ArrayList<>();
+        Pattern pattern = Pattern.compile(filterBy + "\\w+");
+
+        Matcher matcher = pattern.matcher(toFilter);
+        while (matcher.find())
+        {
+            results.add(matcher.group().replace(filterBy,""));
+        }
+        return results;
+    }
+
+    public List<User> getMentionedUsers(String content, UserRepository userRepository) {
+        ArrayList<User> mentioned = new ArrayList<>();
+        List<String> potentialUsers = filterContentForUsers(content);
+        for (String username: potentialUsers) {
+            User user = userRepository.findByCredentialsUsername(username);
+            if (user != null) {
+                mentioned.add(user);
+            }
+        }
+        return mentioned;
+    }
+
+    public List<Hashtag> getMentionedHashtags(String content, HashtagRepository hashtagRepository) {
+        ArrayList<Hashtag> mentioned = new ArrayList<>();
+        List<String> hashtags = filterContentForHashtags(content);
+        for (String label: hashtags) {
+            Hashtag hashtag = hashtagRepository.findByLabel(label);
+            if (hashtag == null) {
+                hashtag = new Hashtag();
+                hashtag.setLabel(label);
+                hashtagRepository.saveAndFlush(hashtag);
+            }
+            mentioned.add(hashtag);
+        }
+        return mentioned;
+    }
+
+    private List<String> filterContentForUsers(String content) {
+        return filterByStartingCharacters("@", content);
+    }
+
+    private List<String> filterContentForHashtags(String content) {
+        return filterByStartingCharacters("#", content);
+    }
+
     public void validateUserRequest(UserRequestDto userRequestDto) {
         String username = userRequestDto.getCredentials().getUsername();
         if (username == null || username.isBlank()) {
@@ -58,6 +107,12 @@ public class Utility {
         String email = userRequestDto.getProfile().getEmail();
         if (email == null || email.isBlank()) {
             throw new BadRequestException("Email is required.");
+        }
+    }
+
+    public void validateContent(String content) {
+        if (content == null || content.isBlank()) {
+            throw new BadRequestException("Content is required.");
         }
     }
 
