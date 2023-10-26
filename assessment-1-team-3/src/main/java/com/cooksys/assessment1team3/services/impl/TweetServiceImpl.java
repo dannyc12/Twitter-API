@@ -33,21 +33,25 @@ public class TweetServiceImpl implements TweetService {
     }
 
     public List<TweetResponseDto> getTweetRepliesById(Long id) {
-        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
-        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
-            throw new NotFoundException("No tweet found with id: " + id);
-        }
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
         return tweetMapper.entitiesToDtos(tweetRepository.findAllRepliesToTweet(id));
     }
 
     @Override
     public ContextDto getTweetContext(Long id) {
-        Optional<Tweet> optionalTweet = tweetRepository.findById(id);
-        if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
-            throw new NotFoundException("No tweet found with id: " + id);
-        }
-        return null;
+        Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
+        utility.validateTweetExists(tweet, id);
+        TweetResponseDto target = tweetMapper.entityToDto(tweet);
+//        List<Tweet> before = tweetRepository;
+        List<TweetResponseDto> after = getTweetRepliesById(id);
+        ContextDto contextDto = new ContextDto();
+        contextDto.setTarget(target);
+        contextDto.setBefore(null);
+        contextDto.setAfter(after);
+        return contextDto;
     }
+
     @Override
     public TweetResponseDto deleteTweetById(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = tweetRepository.findByIdAndDeletedFalse(id);
