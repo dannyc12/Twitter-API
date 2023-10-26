@@ -74,6 +74,21 @@ public class Utility {
         return mentioned;
     }
 
+    public void validateCreateUser(UserRequestDto userRequestDto) {
+        if (userRequestDto == null) {
+            throw new BadRequestException("Profile and Credentials are required.");
+        }
+        if (userRequestDto.getCredentials() == null) {
+            throw new BadRequestException("Credentials are required.");
+        }
+        if (userRequestDto.getProfile() == null) {
+            throw new BadRequestException("Profile is required.");
+        }
+        if (userRequestDto.getProfile().getEmail() == null || userRequestDto.getProfile().getEmail().isBlank()) {
+            throw new BadRequestException("Email is required.");
+        }
+    }
+
     public List<Hashtag> getMentionedHashtags(String content, HashtagRepository hashtagRepository) {
         ArrayList<Hashtag> mentioned = new ArrayList<>();
         List<String> hashtags = filterContentForHashtags(content);
